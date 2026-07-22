@@ -10,7 +10,10 @@
 </head>
 <body onload="brython()">
     <h1 class="street-dodger-title">Street Dodger</h1>
-    <p class="rules">Use the arrow keys to move the player and avoid the obstacles! Survive as long as you can!</p>
+    <p class="rules">Use the arrow keys to move the player and avoid the obstacles! Survive as long as you can! Click play to start or to restart after game over.</p>
+    <p style = "text-align: center" class = rules>High Score: </p>
+    <p style = "text-align: center" class = rules id = score_display>0</p>
+    <button id = "play_button">Play</button>
     <canvas class="canvas" id="game" width="400" height="500"></canvas>
     <script type="text/python" src="main.py"></script>
     <button id="pause_button">Pause</button>

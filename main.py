@@ -10,10 +10,10 @@ lane_settings = {} #initializing the dictionary that contains the settings for e
 car_colors = ["red","orange","yellow","blue","purple"] #list of car colors 
 lanes = [0,50,100,150,200,250,300,350] #lane x values
 possible_speeds = [4,5,6,7,8] #possible speed values
-high_score = 0; 
-score = 0;
 minute = 0 
 second = 0 
+score = 0
+spawn_speed = 1000 #initially cars spawn one every second
 #above: minute and second timer initialization values 
 cars = [] #list of the cars that will be spawned on screen 
 game_over = False 
@@ -22,6 +22,9 @@ paused = False #initializing the paused variable to false
 def clear_canvas():
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+def draw_score():
+    score_txt = "Score: " + str(score)
+    Text(score_txt, 300, 30, "white")
 
 def Rectangle(x,y,width,height,color): #rectangle drawing function
     ctx.fillStyle = color 
@@ -57,11 +60,6 @@ def draw_timer(): #draws the timer on the canvas
     timer_text = f"{minute:02d}:{second:02d}" 
     Text(timer_text, 10, 30, "white")
 
-def draw_score(): #draws score on canvas
-    global score
-    score_text = "Score: " + score
-    Text(score_text,10,20,"white")
-
 def draw_game_over(): #draws the game over text on the canvas
     Text("GAME OVER", 150, 250, "red")
 
@@ -78,14 +76,14 @@ def get_height():
 def timers(): 
     global second 
     global minute 
+    global score
+    global spawn_speed
     second += 1 
+    score += 1
     if second > 59: 
         second = 0 
         minute += 1 
-
-def calculate_score():
-    global score
-    return score + 1
+        spawn_speed -= 50
 
 def move_player(event): 
     if game_over == True: 
@@ -155,6 +153,12 @@ def del_car(): #function to delete cars off screen
         if car["y"] < 0 or car["y"] > get_height():
             cars.remove(car)
 
+def adjust_difficulty():
+    global second
+    global spawn_speed
+    if second == 30:
+        spawn_speed -= 50
+
 def check_collision(): #function to check if the player has collided with a car
     player_x = player["x"] + 15 
     player_y = player["y"] + 15 
@@ -197,7 +201,9 @@ def game_loop(): #game loop function
     move_car()
     draw_player()
     draw_cars()
+    draw_score()
     draw_timer()
+    adjust_difficulty()
     del_car()
     if check_collision(): 
         player["color"] = "red"
@@ -215,7 +221,6 @@ document.bind("keydown", move_player)
 
 randomize_lane_settings() #randomizes the lane settings for the cars
 game_timer = timer.set_interval(game_loop, 50) #refreshes game loop every 50 milliseconds
-score = timer.set_interval(calculate_score,1000) #every second survived you get a point
-timer.set_interval(add_cars, 1000) #calls the add_cars function every second
+timer.set_interval(add_cars, spawn_speed) #calls the add_cars function every second
 time = timer.set_interval(timers,1000)#calls timer function to update the timer every second 
  

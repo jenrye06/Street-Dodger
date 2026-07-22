@@ -10,6 +10,8 @@ lane_settings = {} #initializing the dictionary that contains the settings for e
 car_colors = ["red","orange","yellow","blue","purple"] #list of car colors 
 lanes = [0,50,100,150,200,250,300,350] #lane x values
 possible_speeds = [4,5,6,7,8] #possible speed values
+high_score = 0; 
+score = 0;
 minute = 0 
 second = 0 
 #above: minute and second timer initialization values 
@@ -55,6 +57,11 @@ def draw_timer(): #draws the timer on the canvas
     timer_text = f"{minute:02d}:{second:02d}" 
     Text(timer_text, 10, 30, "white")
 
+def draw_score(): #draws score on canvas
+    global score
+    score_text = "Score: " + score
+    Text(score_text,10,20,"white")
+
 def draw_game_over(): #draws the game over text on the canvas
     Text("GAME OVER", 150, 250, "red")
 
@@ -75,6 +82,10 @@ def timers():
     if second > 59: 
         second = 0 
         minute += 1 
+
+def calculate_score():
+    global score
+    return score + 1
 
 def move_player(event): 
     if game_over == True: 
@@ -204,6 +215,7 @@ document.bind("keydown", move_player)
 
 randomize_lane_settings() #randomizes the lane settings for the cars
 game_timer = timer.set_interval(game_loop, 50) #refreshes game loop every 50 milliseconds
+score = timer.set_interval(calculate_score,1000) #every second survived you get a point
 timer.set_interval(add_cars, 1000) #calls the add_cars function every second
 time = timer.set_interval(timers,1000)#calls timer function to update the timer every second 
  

@@ -5,7 +5,9 @@ import math #import math functions
 
 canvas = document["game"] #get the canvas element from the HTML document
 ctx = canvas.getContext("2d") #get the context of the canvas
+pause_button = document["pause_button"] #get the button element from HTML document
 
+isPaused = False 
 lane_settings = {} #initializing the dictionary that contains the settings for each lane 
 car_colors = ["red","orange","yellow","blue","purple"] #list of car colors 
 lanes = [0,50,100,150,200,250,300,350] #lane x values
@@ -17,7 +19,15 @@ spawn_speed = 1000 #initially cars spawn one every second
 #above: minute and second timer initialization values 
 cars = [] #list of the cars that will be spawned on screen 
 game_over = False 
-paused = False #initializing the paused variable to false
+
+def pause_game(event):
+    global isPaused
+    isPaused = not isPaused
+    if isPaused:
+        pause_button.text = "Resume"
+    else:
+        pause_button.text = "Pause"
+pause_button.bind("click", pause_game)
 
 def clear_canvas():
     ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -136,7 +146,7 @@ def add_cars():
     for existing_car in cars: 
         x = existing_car["x"] 
         y = existing_car["y"] 
-        if x == rand_lane and abs(y-start_y) < 100: 
+        if x == rand_lane and abs(y-start_y) < 100 or isPaused: 
             safe_to_spawn = False 
             break 
     if not safe_to_spawn: 
@@ -195,6 +205,9 @@ def explosion():
 
 def game_loop(): #game loop function
     global game_over 
+    global isPaused
+    if isPaused:
+        return
     clear_canvas()
     Rectangle(0,0,400,500,"black")
     add_road_lines()
@@ -223,4 +236,3 @@ randomize_lane_settings() #randomizes the lane settings for the cars
 game_timer = timer.set_interval(game_loop, 50) #refreshes game loop every 50 milliseconds
 timer.set_interval(add_cars, spawn_speed) #calls the add_cars function every second
 time = timer.set_interval(timers,1000)#calls timer function to update the timer every second 
- 
